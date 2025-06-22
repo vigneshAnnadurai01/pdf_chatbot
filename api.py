@@ -22,7 +22,7 @@ def get_info(user_input:user_info):
   
     return{
         
-        'message':'store_info_data  is get successfully',
+        'message':'store_info_dat  is get successfully',
         'name':user_input.user_name
         # 'phone_number': user_input.phone_number
            
