@@ -24,7 +24,7 @@ app = FastAPI()
 
 @app.post("/files/")
 async def create_file(file: Annotated[bytes, File()]):
-    pdffile=fitz.open
+    pdffile=fitz.ope
     return {"file_size": len(file)}
 
 
