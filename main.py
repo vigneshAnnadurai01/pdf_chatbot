@@ -1,17 +1,17 @@
 from typing import Annotated
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile , HTTPException
 import os
 import shutil
+import pymupdf
+import fitz
+
+
 
 app = FastAPI()
 
 
 UPLOAD_DIRECTORY = "uploads"
 os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)  # Create it if not exists
-
-from fastapi import FastAPI, UploadFile, File, HTTPException
-import os
-import shutil
 
 app = FastAPI()
 
@@ -23,6 +23,7 @@ app = FastAPI()
 
 @app.post("/files/")
 async def create_file(file: Annotated[bytes, File()]):
+    pdffile=fitz.open
     return {"file_size": len(file)}
 
 
@@ -54,4 +55,6 @@ if __name__ == "__main__":
     import uvicorn 
     
     uvicorn.run("main:app",host="0.0.0.0",port=9002)
-# 
+
+
+
