@@ -3,7 +3,8 @@ from fastapi import FastAPI, File, UploadFile , HTTPException
 import os
 import shutil
 import pymupdf
-import fitz
+import fitz 
+import pdfplumber
 
 
 
@@ -38,6 +39,7 @@ async def create_upload_file(file: UploadFile = File(...)):
         # ✅ Save uploaded file to local directory
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
+
 
         return {
             "message": "✅ File uploaded and saved successfully.",
