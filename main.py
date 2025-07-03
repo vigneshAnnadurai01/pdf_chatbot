@@ -2,9 +2,9 @@ from typing import Annotated
 from fastapi import FastAPI, File, UploadFile , HTTPException
 import os
 import shutil
-import pymupdf
 import fitz 
 import pdfplumber
+
 
 
 
@@ -14,7 +14,6 @@ app = FastAPI()
 UPLOAD_DIRECTORY = "uploads"
 os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)  # Create it if not exists
 
-app = FastAPI()
 
 # ✅ Define your target directory (folder to save files)
 # UPLOAD_DIRECTORY = "uploads"
@@ -24,7 +23,7 @@ app = FastAPI()
 
 @app.post("/files/")
 async def create_file(file: Annotated[bytes, File()]):
-    pdffile=fitz.ope
+    pdffile=fitz.open
     return {"file_size": len(file)}
 
 
@@ -39,19 +38,42 @@ async def create_upload_file(file: UploadFile = File(...)):
         # ✅ Save uploaded file to local directory
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
+        
+        extracted_text = ''
+# extract text using pdfplnumber 
+        with pdfplumber.open(file_path) as pdf:
+         for page in pdf.pages:
+           page_text = page.extract_text()
+           if page_text:
+               extracted_text+= page_text + "\n"
+
+  # Step 3: Split into phrases and save each phrase in a new line
+        phrases = [phrase.strip() for phrase in page_text.replace('\n', ' ').split('.') if phrase.strip()]
+
+        # Step 4: Save phrases to .txt file
+        txt_path = file_path.replace(".pdf", "_phrases.txt")
+        with open(txt_path, "w", encoding="utf-8") as f:
+            for phrase in phrases:
+                f.write(phrase + ".\n")
+
 
 
         return {
             "message": "✅ File uploaded and saved successfully.",
             "filename": file.filename,
-            "saved_to": file_path
+            "total_phrases": len(phrases),
+            "saved_to": txt_path 
         }
 
+
+
     except Exception as e:
+        print(str(e))
         raise HTTPException(status_code=500, detail=f"❌ Failed to save file: {str(e)}")
 
+    
 
-            #   return {"filename": file.filename}
+
    
 if __name__ == "__main__":
     import uvicorn 

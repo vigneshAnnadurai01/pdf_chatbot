@@ -1,0 +1,4 @@
+Got feedback? Drop us a line at releasenotes@microsoft.
+com.
+We’ll use your feedback to improve our content.
+To find out when there are updates to this guide, follow us on Twitter @MSFTDynamics365.
