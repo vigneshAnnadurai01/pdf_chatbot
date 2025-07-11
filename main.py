@@ -4,6 +4,7 @@ import os
 import shutil
 import fitz 
 import pdfplumber
+from sentence_transformers import SentenceTransformer
 
 
 
@@ -56,13 +57,29 @@ async def create_upload_file(file: UploadFile = File(...)):
             for phrase in phrases:
                 f.write(phrase + ".\n")
 
+ 
+
+
+            model = SentenceTransformer('all-MiniLM-L6-v2')
+            with open(txt_path, "r", encoding="utf-8") as txt_file:
+                    text = txt_file.read()
+            vector = model.encode(text)
+
+
+            # print(vector)  # This is the embedding (a 384-dimensional vector)
+
+
+
+
 
 
         return {
             "message": "✅ File uploaded and saved successfully.",
             "filename": file.filename,
             "total_phrases": len(phrases),
-            "saved_to": txt_path 
+            "saved_to": txt_path,
+            "chunk": vector.tolist()
+
         }
 
 
@@ -71,7 +88,8 @@ async def create_upload_file(file: UploadFile = File(...)):
         print(str(e))
         raise HTTPException(status_code=500, detail=f"❌ Failed to save file: {str(e)}")
 
-    
+
+
 
 
    
